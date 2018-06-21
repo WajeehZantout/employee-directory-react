@@ -1,5 +1,7 @@
 # employee-directory-react
 
+[![CircleCI](https://circleci.com/gh/WajeehZantout/employee-directory-react.svg?style=svg)](https://circleci.com/gh/WajeehZantout/employee-directory-react)
+
 A basic employee directory application using React and Apollo.
 
 ## Usage
