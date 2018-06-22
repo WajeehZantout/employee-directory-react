@@ -16,6 +16,39 @@ class EmployeesTable extends Component<Props, {}> {
     this.state = {};
   }
 
+  static renderAddButton() {
+    return (
+      <button className="btn btn-success">
+        Add <i className="fa fa-plus-circle" />
+      </button>
+    );
+  }
+
+  static renderRemoveButton() {
+    return (
+      <button className="btn btn-danger btn-block btn-sm" onClick={() => {}}>
+        <i className="fa fa-trash" />
+      </button>
+    );
+  }
+
+  static renderEditButton() {
+    return (
+      <button className="btn btn-primary btn-block btn-sm" onClick={() => {}}>
+        <i className="fa fa-edit" />
+      </button>
+    );
+  }
+
+  static renderHeader() {
+    return (
+      <div className="d-flex justify-content-between">
+        <h2>Employees Table</h2>
+        {EmployeesTable.renderAddButton()}
+      </div>
+    );
+  }
+
   renderTable() {
     const { employees, loading } = this.props.employeesQuery;
     return (
@@ -45,14 +78,16 @@ class EmployeesTable extends Component<Props, {}> {
               {
                 Header: 'Edit',
                 width: 90,
-                Filter: () => null,
-                Cell: () => null,
+                sortable: false,
+                filterable: false,
+                Cell: () => EmployeesTable.renderEditButton(),
               },
               {
                 Header: 'Remove',
                 width: 90,
-                Filter: () => null,
-                Cell: () => null,
+                sortable: false,
+                filterable: false,
+                Cell: () => EmployeesTable.renderRemoveButton(),
               },
             ],
           },
@@ -73,7 +108,12 @@ class EmployeesTable extends Component<Props, {}> {
   }
 
   render() {
-    return <div className="container">{this.renderTable()}</div>;
+    return (
+      <div className="container">
+        {EmployeesTable.renderHeader()}
+        {this.renderTable()}
+      </div>
+    );
   }
 }
 
