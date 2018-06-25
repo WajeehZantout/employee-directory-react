@@ -6,37 +6,34 @@ import gql from 'graphql-tag';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 
+import Button from './Button';
+
 type Props = {
   employeesQuery: Object,
 };
 
 class EmployeesTable extends Component<Props, {}> {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
   static renderAddButton() {
     return (
-      <button className="btn btn-success">
+      <Button className="btn btn-success" onClick={() => {}}>
         Add <i className="fa fa-plus-circle" />
-      </button>
+      </Button>
     );
   }
 
   static renderRemoveButton() {
     return (
-      <button className="btn btn-danger btn-block btn-sm" onClick={() => {}}>
+      <Button className="btn btn-danger btn-block btn-sm" onClick={() => {}}>
         <i className="fa fa-trash" />
-      </button>
+      </Button>
     );
   }
 
   static renderEditButton() {
     return (
-      <button className="btn btn-primary btn-block btn-sm" onClick={() => {}}>
+      <Button className="btn btn-primary btn-block btn-sm" onClick={() => {}}>
         <i className="fa fa-edit" />
-      </button>
+      </Button>
     );
   }
 
