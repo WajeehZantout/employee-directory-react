@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { graphql } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
@@ -10,9 +10,54 @@ import Button from './Button';
 
 type Props = {
   employeesQuery: Object,
+  removeEmployeeMutation: Function,
 };
 
+const EMPLOYEE_REMOVAL_CONFIRMATION = 'Are you sure you want to remove this employee ?';
+const EMPLOYEES_QUERY = gql`
+  query EmployeesQuery {
+    employees {
+      id
+      firstName
+      lastName
+      jobTitle
+      phoneNumber
+    }
+  }
+`;
+const REMOVE_EMPLOYEE_MUTATION = gql`
+  mutation RemoveEmployeeMutation($id: String!) {
+    removeEmployee(id: $id) {
+      id
+      firstName
+      lastName
+      jobTitle
+      phoneNumber
+    }
+  }
+`;
+
 class EmployeesTable extends Component<Props, {}> {
+  async removeEmployee(id) {
+    /* eslint no-alert: 0 */
+    if (window.confirm(EMPLOYEE_REMOVAL_CONFIRMATION)) {
+      await this.props.removeEmployeeMutation({
+        variables: {
+          id,
+        },
+        update: (store, { data: { removeEmployee } }) => {
+          const data = store.readQuery({ query: EMPLOYEES_QUERY });
+          const index = data.employees.map(employee => employee.id).indexOf(removeEmployee.id);
+          data.employees.splice(index, 1);
+          store.writeQuery({
+            query: EMPLOYEES_QUERY,
+            data,
+          });
+        },
+      });
+    }
+  }
+
   static renderAddButton() {
     return (
       <Button className="btn btn-success" onClick={() => {}}>
@@ -21,9 +66,12 @@ class EmployeesTable extends Component<Props, {}> {
     );
   }
 
-  static renderRemoveButton() {
+  renderRemoveButton(employeeID) {
     return (
-      <Button className="btn btn-danger btn-block btn-sm" onClick={() => {}}>
+      <Button
+        className="btn btn-danger btn-block btn-sm"
+        onClick={() => this.removeEmployee(employeeID)}
+      >
         <i className="fa fa-trash" />
       </Button>
     );
@@ -84,7 +132,7 @@ class EmployeesTable extends Component<Props, {}> {
                 width: 90,
                 sortable: false,
                 filterable: false,
-                Cell: () => EmployeesTable.renderRemoveButton(),
+                Cell: row => this.renderRemoveButton(row.original.id),
               },
             ],
           },
@@ -114,16 +162,7 @@ class EmployeesTable extends Component<Props, {}> {
   }
 }
 
-const EMPLOYEES_QUERY = gql`
-  query EmployeesQuery {
-    employees {
-      id
-      firstName
-      lastName
-      jobTitle
-      phoneNumber
-    }
-  }
-`;
-
-export default graphql(EMPLOYEES_QUERY, { name: 'employeesQuery' })(EmployeesTable);
+export default compose(
+  graphql(EMPLOYEES_QUERY, { name: 'employeesQuery' }),
+  graphql(REMOVE_EMPLOYEE_MUTATION, { name: 'removeEmployeeMutation' }),
+)(EmployeesTable);
