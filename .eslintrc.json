@@ -6,6 +6,16 @@
     "jest": true
   },
   "rules": {
-    "import/no-extraneous-dependencies": 0
+    "import/no-extraneous-dependencies": 0,
+    "jsx-a11y/label-has-for": [
+      2,
+      {
+        "components": ["Label"],
+        "required": {
+          "some": ["nesting", "id"]
+        },
+        "allowChildren": false
+      }
+    ]
   }
 }

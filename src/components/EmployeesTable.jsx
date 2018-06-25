@@ -12,6 +12,7 @@ import RemoveEmployeeMutation from '../graphql/mutations/RemoveEmployeeMutation'
 type Props = {
   employeesQuery: Object,
   removeEmployeeMutation: Function,
+  history: Object,
 };
 
 const EMPLOYEE_REMOVAL_CONFIRMATION = 'Are you sure you want to remove this employee ?';
@@ -37,9 +38,9 @@ class EmployeesTable extends Component<Props, {}> {
     }
   }
 
-  static renderAddButton() {
+  renderAddButton() {
     return (
-      <Button className="btn btn-success" onClick={() => {}}>
+      <Button className="btn btn-success" onClick={() => this.props.history.push('/new')}>
         Add <i className="fa fa-plus-circle" />
       </Button>
     );
@@ -64,11 +65,11 @@ class EmployeesTable extends Component<Props, {}> {
     );
   }
 
-  static renderHeader() {
+  renderHeader() {
     return (
       <div className="d-flex justify-content-between">
         <h2>Employees Table</h2>
-        {EmployeesTable.renderAddButton()}
+        {this.renderAddButton()}
       </div>
     );
   }
@@ -134,7 +135,7 @@ class EmployeesTable extends Component<Props, {}> {
   render() {
     return (
       <div className="container">
-        {EmployeesTable.renderHeader()}
+        {this.renderHeader()}
         {this.renderTable()}
       </div>
     );
