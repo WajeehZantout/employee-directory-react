@@ -2,11 +2,12 @@
 
 import React, { Component } from 'react';
 import { graphql, compose } from 'react-apollo';
-import gql from 'graphql-tag';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 
 import Button from './Button';
+import EmployeesQuery from '../graphql/queries/EmployeesQuery';
+import RemoveEmployeeMutation from '../graphql/mutations/RemoveEmployeeMutation';
 
 type Props = {
   employeesQuery: Object,
@@ -14,28 +15,6 @@ type Props = {
 };
 
 const EMPLOYEE_REMOVAL_CONFIRMATION = 'Are you sure you want to remove this employee ?';
-const EMPLOYEES_QUERY = gql`
-  query EmployeesQuery {
-    employees {
-      id
-      firstName
-      lastName
-      jobTitle
-      phoneNumber
-    }
-  }
-`;
-const REMOVE_EMPLOYEE_MUTATION = gql`
-  mutation RemoveEmployeeMutation($id: String!) {
-    removeEmployee(id: $id) {
-      id
-      firstName
-      lastName
-      jobTitle
-      phoneNumber
-    }
-  }
-`;
 
 class EmployeesTable extends Component<Props, {}> {
   async removeEmployee(id) {
@@ -46,11 +25,11 @@ class EmployeesTable extends Component<Props, {}> {
           id,
         },
         update: (store, { data: { removeEmployee } }) => {
-          const data = store.readQuery({ query: EMPLOYEES_QUERY });
+          const data = store.readQuery({ query: EmployeesQuery });
           const index = data.employees.map(employee => employee.id).indexOf(removeEmployee.id);
           data.employees.splice(index, 1);
           store.writeQuery({
-            query: EMPLOYEES_QUERY,
+            query: EmployeesQuery,
             data,
           });
         },
@@ -163,6 +142,6 @@ class EmployeesTable extends Component<Props, {}> {
 }
 
 export default compose(
-  graphql(EMPLOYEES_QUERY, { name: 'employeesQuery' }),
-  graphql(REMOVE_EMPLOYEE_MUTATION, { name: 'removeEmployeeMutation' }),
+  graphql(EmployeesQuery, { name: 'employeesQuery' }),
+  graphql(RemoveEmployeeMutation, { name: 'removeEmployeeMutation' }),
 )(EmployeesTable);
