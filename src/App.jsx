@@ -2,15 +2,18 @@
 
 import React from 'react';
 
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
 import EmployeesTable from './components/EmployeesTable';
 import AddEditEmployee from './components/AddEditEmployee';
 
 const App = () => (
   <div>
-    <Route exact path="/" component={EmployeesTable} />
-    <Route exact path="/new" component={AddEditEmployee} />
+    <Switch>
+      <Route exact path="/" component={EmployeesTable} />
+      <Route exact path="/new" component={AddEditEmployee} />
+      <Route exact path="/:id" component={AddEditEmployee} />
+    </Switch>
   </div>
 );
 

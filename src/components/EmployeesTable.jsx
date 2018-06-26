@@ -57,9 +57,12 @@ class EmployeesTable extends Component<Props, {}> {
     );
   }
 
-  static renderEditButton() {
+  renderEditButton(employeeID) {
     return (
-      <Button className="btn btn-primary btn-block btn-sm" onClick={() => {}}>
+      <Button
+        className="btn btn-primary btn-block btn-sm"
+        onClick={() => this.props.history.push(`/${employeeID}`)}
+      >
         <i className="fa fa-edit" />
       </Button>
     );
@@ -105,7 +108,7 @@ class EmployeesTable extends Component<Props, {}> {
                 width: 90,
                 sortable: false,
                 filterable: false,
-                Cell: () => EmployeesTable.renderEditButton(),
+                Cell: row => this.renderEditButton(row.original.id),
               },
               {
                 Header: 'Remove',

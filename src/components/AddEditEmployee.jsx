@@ -1,17 +1,19 @@
 // @flow
 
 import React, { Component } from 'react';
-import { graphql, compose } from 'react-apollo';
+import { withApollo } from 'react-apollo';
 
 import EmployeesQuery from '../graphql/queries/Employees';
 import AddEmployeeMutation from '../graphql/mutations/AddEmployee';
+import EmployeeQuery from '../graphql/queries/Employee';
 
 const REQUIRED_FIELD = 'This field is required.';
 const TEL_PATTERN = '^[0-9\\-\\+\\s\\(\\)]*$';
 
 type Props = {
-  addEmployeeMutation: Function,
+  client: Object,
   history: Object,
+  match: Object,
 };
 
 type State = {
@@ -31,6 +33,39 @@ class AddEditEmployee extends Component<Props, State> {
     showValidationMessage: false,
   };
 
+  componentDidMount() {
+    const { match, client, history } = this.props;
+    const {
+      params: { id },
+      path,
+    } = match;
+
+    if (path !== '/new') {
+      client
+        .query({
+          query: EmployeeQuery,
+          variables: {
+            id,
+          },
+        })
+        .then((response) => {
+          if (response.data.employee) {
+            const {
+              firstName, lastName, jobTitle, phoneNumber,
+            } = response.data.employee;
+            this.setState({
+              firstName,
+              lastName,
+              jobTitle,
+              phoneNumber,
+            });
+          } else {
+            history.replace('/new');
+          }
+        });
+    }
+  }
+
   async addEmployee(e) {
     const {
       firstName, lastName, jobTitle, phoneNumber,
@@ -41,7 +76,8 @@ class AddEditEmployee extends Component<Props, State> {
       return this.setState({ showValidationMessage: true });
     }
 
-    await this.props.addEmployeeMutation({
+    await this.props.client.mutate({
+      mutation: AddEmployeeMutation,
       variables: {
         firstName,
         lastName,
@@ -88,17 +124,18 @@ class AddEditEmployee extends Component<Props, State> {
   }
 
   renderContent() {
+    const { id } = this.props.match.params;
     const {
       firstName, lastName, jobTitle, phoneNumber,
     } = this.state;
 
     return (
-      <form onSubmit={e => this.addEmployee(e)}>
+      <form onSubmit={e => (id ? {} : this.addEmployee(e))}>
         {this.renderField('First Name', 'firstName', firstName, 'text')}
         {this.renderField('Last Name', 'lastName', lastName, 'text')}
         {this.renderField('Job Title', 'jobTitle', jobTitle, 'text')}
         {this.renderField('Phone Number', 'phoneNumber', phoneNumber, 'tel')}
-        <input className="btn btn-primary btn-block" type="submit" value="Add" />
+        <input className="btn btn-primary btn-block" type="submit" value={id ? 'Save' : 'Add'} />
       </form>
     );
   }
@@ -113,4 +150,4 @@ class AddEditEmployee extends Component<Props, State> {
   }
 }
 
-export default compose(graphql(AddEmployeeMutation, { name: 'addEmployeeMutation' }))(AddEditEmployee);
+export default withApollo(AddEditEmployee);
