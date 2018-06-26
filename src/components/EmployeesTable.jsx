@@ -6,8 +6,8 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 
 import Button from './Button';
-import EmployeesQuery from '../graphql/queries/EmployeesQuery';
-import RemoveEmployeeMutation from '../graphql/mutations/RemoveEmployeeMutation';
+import EmployeesQuery from '../graphql/queries/Employees';
+import RemoveEmployeeMutation from '../graphql/mutations/RemoveEmployee';
 
 type Props = {
   employeesQuery: Object,

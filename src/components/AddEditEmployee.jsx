@@ -3,8 +3,8 @@
 import React, { Component } from 'react';
 import { graphql, compose } from 'react-apollo';
 
-import EmployeesQuery from '../graphql/queries/EmployeesQuery';
-import AddEmployeeMutation from '../graphql/mutations/AddEmployeeMutation';
+import EmployeesQuery from '../graphql/queries/Employees';
+import AddEmployeeMutation from '../graphql/mutations/AddEmployee';
 
 const REQUIRED_FIELD = 'This field is required.';
 const TEL_PATTERN = '^[0-9\\-\\+\\s\\(\\)]*$';
