@@ -6,6 +6,7 @@ import { withApollo } from 'react-apollo';
 import EmployeesQuery from '../graphql/queries/Employees';
 import AddEmployeeMutation from '../graphql/mutations/AddEmployee';
 import EmployeeQuery from '../graphql/queries/Employee';
+import UpdateEmployeeInfoMutation from '../graphql/mutations/UpdateEmployeeInfo';
 
 const REQUIRED_FIELD = 'This field is required.';
 const TEL_PATTERN = '^[0-9\\-\\+\\s\\(\\)]*$';
@@ -99,6 +100,31 @@ class AddEditEmployee extends Component<Props, State> {
     return this.props.history.replace('/');
   }
 
+  async updateEmployeeInfo(e) {
+    const {
+      firstName, lastName, jobTitle, phoneNumber,
+    } = this.state;
+    const { id } = this.props.match.params;
+    e.preventDefault();
+
+    if (!firstName || !lastName || !jobTitle || !phoneNumber) {
+      return this.setState({ showValidationMessage: true });
+    }
+
+    await this.props.client.mutate({
+      mutation: UpdateEmployeeInfoMutation,
+      variables: {
+        id,
+        firstName,
+        lastName,
+        jobTitle,
+        phoneNumber,
+      },
+    });
+
+    return this.props.history.replace('/');
+  }
+
   renderField(label, key, value, type) {
     return (
       <div className="form-group">
@@ -130,7 +156,7 @@ class AddEditEmployee extends Component<Props, State> {
     } = this.state;
 
     return (
-      <form onSubmit={e => (id ? {} : this.addEmployee(e))}>
+      <form onSubmit={e => (id ? this.updateEmployeeInfo(e) : this.addEmployee(e))}>
         {this.renderField('First Name', 'firstName', firstName, 'text')}
         {this.renderField('Last Name', 'lastName', lastName, 'text')}
         {this.renderField('Job Title', 'jobTitle', jobTitle, 'text')}
