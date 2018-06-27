@@ -7,7 +7,8 @@ import EmployeesQuery from '../graphql/queries/Employees';
 import AddEmployeeMutation from '../graphql/mutations/AddEmployee';
 import EmployeeQuery from '../graphql/queries/Employee';
 import UpdateEmployeeInfoMutation from '../graphql/mutations/UpdateEmployeeInfo';
-import { REQUIRED_FIELD, TEL_PATTERN } from '../constants';
+import { REQUIRED_FIELD } from '../constants';
+import FormInput from './FormInput';
 
 type Props = {
   client: Object,
@@ -123,20 +124,17 @@ class AddEditEmployee extends Component<Props, State> {
     return this.props.history.replace('/');
   }
 
-  renderField(label, key, value, type) {
+  renderField(label, name, value, type) {
     return (
-      <div className="form-group">
-        <label htmlFor={key}>{label}</label>
-        <input
-          id={key}
-          type={type}
-          pattern={type === 'tel' ? TEL_PATTERN : null}
-          className="form-control"
-          value={value}
-          onChange={e => this.setState({ [key]: e.target.value })}
-        />
+      <FormInput
+        label={label}
+        name={name}
+        value={value}
+        type={type}
+        onChange={e => this.setState({ [name]: e.target.value })}
+      >
         {this.renderValidationMessage(value)}
-      </div>
+      </FormInput>
     );
   }
 
