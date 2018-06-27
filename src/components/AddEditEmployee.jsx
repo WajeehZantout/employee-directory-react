@@ -7,9 +7,7 @@ import EmployeesQuery from '../graphql/queries/Employees';
 import AddEmployeeMutation from '../graphql/mutations/AddEmployee';
 import EmployeeQuery from '../graphql/queries/Employee';
 import UpdateEmployeeInfoMutation from '../graphql/mutations/UpdateEmployeeInfo';
-
-const REQUIRED_FIELD = 'This field is required.';
-const TEL_PATTERN = '^[0-9\\-\\+\\s\\(\\)]*$';
+import { REQUIRED_FIELD, TEL_PATTERN } from '../constants';
 
 type Props = {
   client: Object,

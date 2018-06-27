@@ -8,14 +8,13 @@ import 'react-table/react-table.css';
 import Button from './Button';
 import EmployeesQuery from '../graphql/queries/Employees';
 import RemoveEmployeeMutation from '../graphql/mutations/RemoveEmployee';
+import { EMPLOYEE_REMOVAL_CONFIRMATION } from '../constants';
 
 type Props = {
   employeesQuery: Object,
   removeEmployeeMutation: Function,
   history: Object,
 };
-
-const EMPLOYEE_REMOVAL_CONFIRMATION = 'Are you sure you want to remove this employee ?';
 
 class EmployeesTable extends Component<Props, {}> {
   async removeEmployee(id) {
