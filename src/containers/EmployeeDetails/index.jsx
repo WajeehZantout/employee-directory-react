@@ -3,12 +3,12 @@
 import React, { Component } from 'react';
 import { withApollo } from 'react-apollo';
 
-import EmployeesQuery from '../graphql/queries/Employees';
-import AddEmployeeMutation from '../graphql/mutations/AddEmployee';
-import EmployeeQuery from '../graphql/queries/Employee';
-import UpdateEmployeeInfoMutation from '../graphql/mutations/UpdateEmployeeInfo';
-import { REQUIRED_FIELD } from '../constants';
-import FormInput from './FormInput';
+import EmployeesQuery from '../../graphql/queries/Employees';
+import AddEmployeeMutation from '../../graphql/mutations/AddEmployee';
+import EmployeeQuery from '../../graphql/queries/Employee';
+import UpdateEmployeeInfoMutation from '../../graphql/mutations/UpdateEmployeeInfo';
+import { REQUIRED_FIELD } from '../../constants';
+import FormInput from '../../components/FormInput';
 
 type Props = {
   client: Object,
@@ -24,7 +24,7 @@ type State = {
   showValidationMessage: boolean,
 };
 
-class AddEditEmployee extends Component<Props, State> {
+class EmployeeDetails extends Component<Props, State> {
   state = {
     firstName: '',
     lastName: '',
@@ -172,4 +172,4 @@ class AddEditEmployee extends Component<Props, State> {
   }
 }
 
-export default withApollo(AddEditEmployee);
+export default withApollo(EmployeeDetails);

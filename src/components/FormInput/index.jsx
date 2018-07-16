@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import { TEL_PATTERN } from '../constants';
+import { TEL_PATTERN } from '../../constants';
 
 type Props = {
   label: string,

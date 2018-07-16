@@ -2,13 +2,12 @@
 
 import React, { Component } from 'react';
 import { graphql, compose } from 'react-apollo';
-import ReactTable from 'react-table';
-import 'react-table/react-table.css';
 
-import Button from './Button';
-import EmployeesQuery from '../graphql/queries/Employees';
-import RemoveEmployeeMutation from '../graphql/mutations/RemoveEmployee';
-import { EMPLOYEE_REMOVAL_CONFIRMATION } from '../constants';
+import Table from '../../components/Table';
+import Button from '../../components/Button';
+import EmployeesQuery from '../../graphql/queries/Employees';
+import RemoveEmployeeMutation from '../../graphql/mutations/RemoveEmployee';
+import { EMPLOYEE_REMOVAL_CONFIRMATION } from '../../constants';
 
 type Props = {
   employeesQuery: Object,
@@ -79,57 +78,11 @@ class EmployeesTable extends Component<Props, {}> {
   renderTable() {
     const { employees, loading } = this.props.employeesQuery;
     return (
-      <ReactTable
+      <Table
         data={employees}
         loading={loading}
-        columns={[
-          {
-            Header: 'Employees Table',
-            columns: [
-              {
-                Header: 'First Name',
-                accessor: 'firstName',
-              },
-              {
-                Header: 'Last Name',
-                accessor: 'lastName',
-              },
-              {
-                Header: 'Job Title',
-                accessor: 'jobTitle',
-              },
-              {
-                Header: 'Phone Number',
-                accessor: 'phoneNumber',
-              },
-              {
-                Header: 'Edit',
-                width: 90,
-                sortable: false,
-                filterable: false,
-                Cell: row => this.renderEditButton(row.original.id),
-              },
-              {
-                Header: 'Remove',
-                width: 90,
-                sortable: false,
-                filterable: false,
-                Cell: row => this.renderRemoveButton(row.original.id),
-              },
-            ],
-          },
-        ]}
-        filterable
-        defaultFilterMethod={(filter, row) => {
-          const id = filter.pivotId || filter.id;
-          return row[id]
-            ? String(row[id])
-                .toLowerCase()
-                .startsWith(filter.value.toLowerCase())
-            : true;
-        }}
-        showPageSizeOptions={false}
-        className="-striped -highlight"
+        renderEditButton={id => this.renderEditButton(id)}
+        renderRemoveButton={id => this.renderRemoveButton(id)}
       />
     );
   }
