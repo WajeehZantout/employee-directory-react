@@ -186,8 +186,8 @@ class EmployeeForm extends Component<Props, State> {
 
   render() {
     return (
-      <div className="container">
-        <h2>Employees Details:</h2>
+      <div className="container mt-3">
+        <h2 className="mb-3">Employees Details:</h2>
         {this.renderContent()}
       </div>
     );
