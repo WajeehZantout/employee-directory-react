@@ -22,15 +22,17 @@ type State = {
   jobTitle: string,
   phoneNumber: string,
   showValidationMessage: boolean,
+  loading: boolean,
 };
 
-class EmployeeDetails extends Component<Props, State> {
+class EmployeeForm extends Component<Props, State> {
   state = {
     firstName: '',
     lastName: '',
     jobTitle: '',
     phoneNumber: '',
     showValidationMessage: false,
+    loading: false,
   };
 
   componentDidMount() {
@@ -66,62 +68,79 @@ class EmployeeDetails extends Component<Props, State> {
     }
   }
 
-  async addEmployee(e) {
+  /* eslint consistent-return: 0 */
+  addEmployee(e) {
+    e.preventDefault();
     const {
       firstName, lastName, jobTitle, phoneNumber,
     } = this.state;
-    e.preventDefault();
+    const { client, history } = this.props;
 
     if (!firstName || !lastName || !jobTitle || !phoneNumber) {
       return this.setState({ showValidationMessage: true });
     }
 
-    await this.props.client.mutate({
-      mutation: AddEmployeeMutation,
-      variables: {
-        firstName,
-        lastName,
-        jobTitle,
-        phoneNumber,
-      },
-      update: (store, { data: { addEmployee } }) => {
-        const data = store.readQuery({
-          query: EmployeesQuery,
+    this.setState({ loading: true }, () => {
+      client
+        .mutate({
+          mutation: AddEmployeeMutation,
+          variables: {
+            firstName,
+            lastName,
+            jobTitle,
+            phoneNumber,
+          },
+          update: (store, { data: { addEmployee } }) => {
+            const data = store.readQuery({
+              query: EmployeesQuery,
+            });
+            data.employees.push(addEmployee);
+            store.writeQuery({
+              query: EmployeesQuery,
+              data,
+            });
+          },
+        })
+        .then(() => {
+          history.replace('/');
+        })
+        .catch(() => {
+          this.setState({ loading: false });
         });
-        data.employees.push(addEmployee);
-        store.writeQuery({
-          query: EmployeesQuery,
-          data,
-        });
-      },
     });
-
-    return this.props.history.replace('/');
   }
 
-  async updateEmployeeInfo(e) {
+  updateEmployeeInfo(e) {
+    e.preventDefault();
     const {
       firstName, lastName, jobTitle, phoneNumber,
     } = this.state;
     const { id } = this.props.match.params;
-    e.preventDefault();
+    const { client, history } = this.props;
 
     if (!firstName || !lastName || !jobTitle || !phoneNumber) {
       return this.setState({ showValidationMessage: true });
     }
 
-    await this.props.client.mutate({
-      mutation: UpdateEmployeeInfoMutation,
-      variables: {
-        id,
-        firstName,
-        lastName,
-        jobTitle,
-        phoneNumber,
-      },
+    this.setState({ loading: true }, () => {
+      client
+        .mutate({
+          mutation: UpdateEmployeeInfoMutation,
+          variables: {
+            id,
+            firstName,
+            lastName,
+            jobTitle,
+            phoneNumber,
+          },
+        })
+        .then(() => {
+          history.replace('/');
+        })
+        .catch(() => {
+          this.setState({ loading: false });
+        });
     });
-
-    return this.props.history.replace('/');
   }
 
   renderField(label, name, value, type) {
@@ -148,7 +167,7 @@ class EmployeeDetails extends Component<Props, State> {
   renderContent() {
     const { id } = this.props.match.params;
     const {
-      firstName, lastName, jobTitle, phoneNumber,
+      firstName, lastName, jobTitle, phoneNumber, loading,
     } = this.state;
 
     return (
@@ -157,7 +176,10 @@ class EmployeeDetails extends Component<Props, State> {
         {this.renderField('Last Name', 'lastName', lastName, 'text')}
         {this.renderField('Job Title', 'jobTitle', jobTitle, 'text')}
         {this.renderField('Phone Number', 'phoneNumber', phoneNumber, 'tel')}
-        <input className="btn btn-primary btn-block" type="submit" value={id ? 'Save' : 'Add'} />
+        <button className="btn btn-primary btn-block">
+          {loading && <i className="fa fa-circle-o-notch fa-spin mr-1" />}
+          {id ? 'Save' : 'Add'}
+        </button>
       </form>
     );
   }
@@ -172,4 +194,4 @@ class EmployeeDetails extends Component<Props, State> {
   }
 }
 
-export default withApollo(EmployeeDetails);
+export default withApollo(EmployeeForm);
