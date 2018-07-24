@@ -2,12 +2,20 @@
 
 import React, { Component } from 'react';
 import { graphql, compose } from 'react-apollo';
+import swal from 'sweetalert';
 
 import Table from '../../components/Table';
 import Button from '../../components/Button';
 import EmployeesQuery from '../../graphql/queries/Employees';
 import RemoveEmployeeMutation from '../../graphql/mutations/RemoveEmployee';
-import { EMPLOYEE_REMOVAL_CONFIRMATION } from '../../constants';
+import {
+  EMPLOYEE_REMOVAL_CONFIRMATION,
+  CONFIRMATION,
+  SUCCESS,
+  EMPLOYEE_REMOVAL_MESSAGE,
+  ERROR,
+  CHECK_INTERNET_CONNECTION,
+} from '../../constants';
 
 type Props = {
   employeesQuery: Object,
@@ -16,24 +24,50 @@ type Props = {
 };
 
 class EmployeesTable extends Component<Props, {}> {
-  async removeEmployee(id) {
-    /* eslint no-alert: 0 */
-    if (window.confirm(EMPLOYEE_REMOVAL_CONFIRMATION)) {
-      await this.props.removeEmployeeMutation({
-        variables: {
-          id,
+  removeEmployee(id) {
+    const { removeEmployeeMutation } = this.props;
+    swal(CONFIRMATION, EMPLOYEE_REMOVAL_CONFIRMATION, {
+      buttons: {
+        cancel: {
+          visible: true,
         },
-        update: (store, { data: { removeEmployee } }) => {
-          const data = store.readQuery({ query: EmployeesQuery });
-          const index = data.employees.map(employee => employee.id).indexOf(removeEmployee.id);
-          data.employees.splice(index, 1);
-          store.writeQuery({
-            query: EmployeesQuery,
-            data,
-          });
+        confirm: {
+          className: 'btn-danger',
         },
-      });
-    }
+      },
+    }).then((value) => {
+      if (value) {
+        removeEmployeeMutation({
+          variables: {
+            id,
+          },
+          update: (store, { data: { removeEmployee } }) => {
+            const data = store.readQuery({ query: EmployeesQuery });
+            const index = data.employees.map(employee => employee.id).indexOf(removeEmployee.id);
+            data.employees.splice(index, 1);
+            store.writeQuery({
+              query: EmployeesQuery,
+              data,
+            });
+          },
+        })
+          .then((res) => {
+            if (res.data.removeEmployee) {
+              swal(SUCCESS, EMPLOYEE_REMOVAL_MESSAGE, 'success', {
+                buttons: {
+                  confirm: {
+                    className: 'btn-primary',
+                  },
+                },
+              });
+            }
+          })
+          .catch(() =>
+            swal(ERROR, CHECK_INTERNET_CONNECTION, 'error', {
+              buttons: { confirm: { className: 'btn-primary' } },
+            }));
+      }
+    });
   }
 
   renderAddButton() {
