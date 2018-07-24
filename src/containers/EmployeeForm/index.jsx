@@ -94,7 +94,7 @@ class EmployeeForm extends Component<Props, State> {
             const data = store.readQuery({
               query: EmployeesQuery,
             });
-            data.employees.push(addEmployee);
+            data.employees.unshift(addEmployee);
             store.writeQuery({
               query: EmployeesQuery,
               data,
