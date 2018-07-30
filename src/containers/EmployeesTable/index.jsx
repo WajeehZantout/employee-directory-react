@@ -12,7 +12,7 @@ import {
   EMPLOYEE_REMOVAL_CONFIRMATION,
   CONFIRMATION,
   SUCCESS,
-  EMPLOYEE_REMOVAL_MESSAGE,
+  EMPLOYEE_REMOVE_MESSAGE,
   ERROR,
   CHECK_INTERNET_CONNECTION,
 } from '../../constants';
@@ -53,7 +53,7 @@ class EmployeesTable extends Component<Props, {}> {
         })
           .then((res) => {
             if (res.data.removeEmployee) {
-              swal(SUCCESS, EMPLOYEE_REMOVAL_MESSAGE, 'success', {
+              swal(SUCCESS, EMPLOYEE_REMOVE_MESSAGE, 'success', {
                 buttons: {
                   confirm: {
                     className: 'btn-primary',

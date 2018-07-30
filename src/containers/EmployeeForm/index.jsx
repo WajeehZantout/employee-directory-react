@@ -2,12 +2,20 @@
 
 import React, { Component } from 'react';
 import { withApollo } from 'react-apollo';
+import swal from 'sweetalert';
 
 import EmployeesQuery from '../../graphql/queries/Employees';
 import AddEmployeeMutation from '../../graphql/mutations/AddEmployee';
 import EmployeeQuery from '../../graphql/queries/Employee';
 import UpdateEmployeeInfoMutation from '../../graphql/mutations/UpdateEmployeeInfo';
-import { REQUIRED_FIELD } from '../../constants';
+import {
+  REQUIRED_FIELD,
+  SUCCESS,
+  EMPLOYEE_ADD_MESSAGE,
+  EMPLOYEE_UPDATE_MESSAGE,
+  ERROR,
+  CHECK_INTERNET_CONNECTION,
+} from '../../constants';
 import FormInput from '../../components/FormInput';
 
 type Props = {
@@ -102,10 +110,20 @@ class EmployeeForm extends Component<Props, State> {
           },
         })
         .then(() => {
+          swal(SUCCESS, EMPLOYEE_ADD_MESSAGE, 'success', {
+            buttons: {
+              confirm: {
+                className: 'btn-primary',
+              },
+            },
+          });
           history.replace('/');
         })
         .catch(() => {
           this.setState({ loading: false });
+          swal(ERROR, CHECK_INTERNET_CONNECTION, 'error', {
+            buttons: { confirm: { className: 'btn-primary' } },
+          });
         });
     });
   }
@@ -135,10 +153,20 @@ class EmployeeForm extends Component<Props, State> {
           },
         })
         .then(() => {
+          swal(SUCCESS, EMPLOYEE_UPDATE_MESSAGE, 'success', {
+            buttons: {
+              confirm: {
+                className: 'btn-primary',
+              },
+            },
+          });
           history.replace('/');
         })
         .catch(() => {
           this.setState({ loading: false });
+          swal(ERROR, CHECK_INTERNET_CONNECTION, 'error', {
+            buttons: { confirm: { className: 'btn-primary' } },
+          });
         });
     });
   }
@@ -177,7 +205,7 @@ class EmployeeForm extends Component<Props, State> {
         {this.renderField('Job Title', 'jobTitle', jobTitle, 'text')}
         {this.renderField('Phone Number', 'phoneNumber', phoneNumber, 'tel')}
         <button className="btn btn-primary btn-block">
-          {loading && <i className="fa fa-circle-o-notch fa-spin mr-1" />}
+          {loading && <i className="fa fa-circle-o-notch fa-spin mr-2" />}
           {id ? 'Save' : 'Add'}
         </button>
       </form>
