@@ -17,7 +17,9 @@ const FormInput = ({
   label, name, value, type, onChange, children,
 }: Props) => (
   <div className="form-group">
-    <label htmlFor={name}>{label}</label>
+    <label className="text-white" htmlFor={name}>
+      {label}
+    </label>
     <input
       id={name}
       type={type}

@@ -20,7 +20,6 @@ const Table = ({
     loading={loading}
     columns={[
       {
-        Header: 'Employees Table',
         columns: [
           {
             Header: 'First Name',
@@ -65,7 +64,7 @@ const Table = ({
         : true;
     }}
     showPageSizeOptions={false}
-    className="-striped -highlight"
+    className="-striped -highlight bg-light rounded p-1"
   />
 );
 

@@ -102,7 +102,7 @@ class EmployeesTable extends Component<Props, {}> {
 
   renderHeader() {
     return (
-      <div className="d-flex justify-content-between mb-3">
+      <div className="d-flex justify-content-between mb-3 text-white">
         <h2>Employees Table</h2>
         {this.renderAddButton()}
       </div>
@@ -123,7 +123,7 @@ class EmployeesTable extends Component<Props, {}> {
 
   render() {
     return (
-      <div className="container mt-3">
+      <div className="container pt-3 pb-3">
         {this.renderHeader()}
         {this.renderTable()}
       </div>

@@ -25,6 +25,7 @@ type State = {
   loading: boolean,
 };
 
+/* eslint consistent-return: 0 */
 class EmployeeForm extends Component<Props, State> {
   state = {
     firstName: '',
@@ -68,7 +69,6 @@ class EmployeeForm extends Component<Props, State> {
     }
   }
 
-  /* eslint consistent-return: 0 */
   addEmployee(e) {
     e.preventDefault();
     const {
@@ -186,8 +186,8 @@ class EmployeeForm extends Component<Props, State> {
 
   render() {
     return (
-      <div className="container mt-3">
-        <h2 className="mb-3">Employees Details:</h2>
+      <div className="container pt-3">
+        <h2 className="mb-3 text-white">Employees Details:</h2>
         {this.renderContent()}
       </div>
     );
