@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { graphql, compose } from 'react-apollo';
 import swal from 'sweetalert';
+import { Helmet } from 'react-helmet';
 
 import Table from '../../components/Table';
 import Button from '../../components/Button';
@@ -124,6 +125,9 @@ class EmployeesTable extends Component<Props, {}> {
   render() {
     return (
       <div className="container pt-3 pb-3">
+        <Helmet>
+          <title>Home | Employee Directory</title>
+        </Helmet>
         {this.renderHeader()}
         {this.renderTable()}
       </div>

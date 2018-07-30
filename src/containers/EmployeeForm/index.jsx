@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { withApollo } from 'react-apollo';
 import swal from 'sweetalert';
+import { Helmet } from 'react-helmet';
 
 import EmployeesQuery from '../../graphql/queries/Employees';
 import AddEmployeeMutation from '../../graphql/mutations/AddEmployee';
@@ -213,8 +214,13 @@ class EmployeeForm extends Component<Props, State> {
   }
 
   render() {
+    const { id } = this.props.match.params;
+
     return (
       <div className="container pt-3">
+        <Helmet>
+          <title>{id ? 'Edit | Employee Directory' : 'Add | Employee Directory'}</title>
+        </Helmet>
         <h2 className="mb-3 text-white">Employees Details:</h2>
         {this.renderContent()}
       </div>
