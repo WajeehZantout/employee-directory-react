@@ -2,22 +2,15 @@
 
 import React, { Component } from 'react';
 import { withApollo } from 'react-apollo';
-import swal from 'sweetalert';
 import { Helmet } from 'react-helmet';
 
 import EmployeesQuery from '../../graphql/queries/Employees';
 import AddEmployeeMutation from '../../graphql/mutations/AddEmployee';
 import EmployeeQuery from '../../graphql/queries/Employee';
 import UpdateEmployeeInfoMutation from '../../graphql/mutations/UpdateEmployeeInfo';
-import {
-  REQUIRED_FIELD,
-  SUCCESS,
-  EMPLOYEE_ADD_MESSAGE,
-  EMPLOYEE_UPDATE_MESSAGE,
-  ERROR,
-  CHECK_INTERNET_CONNECTION,
-} from '../../constants';
+import { REQUIRED_FIELD, EMPLOYEE_ADD_MESSAGE, EMPLOYEE_UPDATE_MESSAGE } from '../../constants';
 import FormInput from '../../components/FormInput';
+import { showSuccessAlert, showErrorAlert } from '../../utils/alert';
 
 type Props = {
   client: Object,
@@ -34,7 +27,6 @@ type State = {
   loading: boolean,
 };
 
-/* eslint consistent-return: 0 */
 class EmployeeForm extends Component<Props, State> {
   state = {
     firstName: '',
@@ -78,98 +70,85 @@ class EmployeeForm extends Component<Props, State> {
     }
   }
 
-  addEmployee(e) {
-    e.preventDefault();
+  addEmployee() {
     const {
       firstName, lastName, jobTitle, phoneNumber,
     } = this.state;
     const { client, history } = this.props;
 
-    if (!firstName || !lastName || !jobTitle || !phoneNumber) {
-      return this.setState({ showValidationMessage: true });
-    }
-
-    this.setState({ loading: true }, () => {
-      client
-        .mutate({
-          mutation: AddEmployeeMutation,
-          variables: {
-            firstName,
-            lastName,
-            jobTitle,
-            phoneNumber,
-          },
-          update: (store, { data: { addEmployee } }) => {
-            const data = store.readQuery({
-              query: EmployeesQuery,
-            });
-            data.employees.unshift(addEmployee);
-            store.writeQuery({
-              query: EmployeesQuery,
-              data,
-            });
-          },
-        })
-        .then(() => {
-          swal(SUCCESS, EMPLOYEE_ADD_MESSAGE, 'success', {
-            buttons: {
-              confirm: {
-                className: 'btn-primary',
-              },
-            },
+    client
+      .mutate({
+        mutation: AddEmployeeMutation,
+        variables: {
+          firstName,
+          lastName,
+          jobTitle,
+          phoneNumber,
+        },
+        update: (store, { data: { addEmployee } }) => {
+          const data = store.readQuery({
+            query: EmployeesQuery,
           });
-          history.replace('/');
-        })
-        .catch(() => {
-          this.setState({ loading: false });
-          swal(ERROR, CHECK_INTERNET_CONNECTION, 'error', {
-            buttons: { confirm: { className: 'btn-primary' } },
+          data.employees.unshift(addEmployee);
+          store.writeQuery({
+            query: EmployeesQuery,
+            data,
           });
-        });
-    });
+        },
+      })
+      .then(() => {
+        showSuccessAlert(EMPLOYEE_ADD_MESSAGE);
+        history.replace('/');
+      })
+      .catch(() => {
+        this.setState({ loading: false });
+        showErrorAlert();
+      });
   }
 
-  updateEmployeeInfo(e) {
-    e.preventDefault();
+  updateEmployeeInfo() {
     const {
       firstName, lastName, jobTitle, phoneNumber,
     } = this.state;
     const { id } = this.props.match.params;
     const { client, history } = this.props;
 
+    client
+      .mutate({
+        mutation: UpdateEmployeeInfoMutation,
+        variables: {
+          id,
+          firstName,
+          lastName,
+          jobTitle,
+          phoneNumber,
+        },
+      })
+      .then(() => {
+        showSuccessAlert(EMPLOYEE_UPDATE_MESSAGE);
+        history.replace('/');
+      })
+      .catch(() => {
+        this.setState({ loading: false });
+        showErrorAlert();
+      });
+  }
+
+  submitForm(e) {
+    e.preventDefault();
+    const {
+      firstName, lastName, jobTitle, phoneNumber,
+    } = this.state;
+    const { id } = this.props.match.params;
+
     if (!firstName || !lastName || !jobTitle || !phoneNumber) {
       return this.setState({ showValidationMessage: true });
     }
 
-    this.setState({ loading: true }, () => {
-      client
-        .mutate({
-          mutation: UpdateEmployeeInfoMutation,
-          variables: {
-            id,
-            firstName,
-            lastName,
-            jobTitle,
-            phoneNumber,
-          },
-        })
-        .then(() => {
-          swal(SUCCESS, EMPLOYEE_UPDATE_MESSAGE, 'success', {
-            buttons: {
-              confirm: {
-                className: 'btn-primary',
-              },
-            },
-          });
-          history.replace('/');
-        })
-        .catch(() => {
-          this.setState({ loading: false });
-          swal(ERROR, CHECK_INTERNET_CONNECTION, 'error', {
-            buttons: { confirm: { className: 'btn-primary' } },
-          });
-        });
-    });
+    return this.setState(
+      { loading: true },
+      () => (id ? this.updateEmployeeInfo() : this.addEmployee()),
+    );
   }
 
   renderField(label, name, value, type) {
@@ -200,7 +179,7 @@ class EmployeeForm extends Component<Props, State> {
     } = this.state;
 
     return (
-      <form onSubmit={e => (id ? this.updateEmployeeInfo(e) : this.addEmployee(e))}>
+      <form onSubmit={e => this.submitForm(e)}>
         {this.renderField('First Name', 'firstName', firstName, 'text')}
         {this.renderField('Last Name', 'lastName', lastName, 'text')}
         {this.renderField('Job Title', 'jobTitle', jobTitle, 'text')}

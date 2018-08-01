@@ -2,21 +2,14 @@
 
 import React, { Component } from 'react';
 import { graphql, compose } from 'react-apollo';
-import swal from 'sweetalert';
 import { Helmet } from 'react-helmet';
 
 import Table from '../../components/Table';
 import Button from '../../components/Button';
 import EmployeesQuery from '../../graphql/queries/Employees';
 import RemoveEmployeeMutation from '../../graphql/mutations/RemoveEmployee';
-import {
-  EMPLOYEE_REMOVAL_CONFIRMATION,
-  CONFIRMATION,
-  SUCCESS,
-  EMPLOYEE_REMOVE_MESSAGE,
-  ERROR,
-  CHECK_INTERNET_CONNECTION,
-} from '../../constants';
+import { EMPLOYEE_REMOVE_MESSAGE } from '../../constants';
+import { showSuccessAlert, showErrorAlert, showConfirmationAlert } from '../../utils/alert';
 
 type Props = {
   employeesQuery: Object,
@@ -27,16 +20,7 @@ type Props = {
 class EmployeesTable extends Component<Props, {}> {
   removeEmployee(id) {
     const { removeEmployeeMutation } = this.props;
-    swal(CONFIRMATION, EMPLOYEE_REMOVAL_CONFIRMATION, {
-      buttons: {
-        cancel: {
-          visible: true,
-        },
-        confirm: {
-          className: 'btn-danger',
-        },
-      },
-    }).then((value) => {
+    showConfirmationAlert().then((value) => {
       if (value) {
         removeEmployeeMutation({
           variables: {
@@ -54,19 +38,10 @@ class EmployeesTable extends Component<Props, {}> {
         })
           .then((res) => {
             if (res.data.removeEmployee) {
-              swal(SUCCESS, EMPLOYEE_REMOVE_MESSAGE, 'success', {
-                buttons: {
-                  confirm: {
-                    className: 'btn-primary',
-                  },
-                },
-              });
+              showSuccessAlert(EMPLOYEE_REMOVE_MESSAGE);
             }
           })
-          .catch(() =>
-            swal(ERROR, CHECK_INTERNET_CONNECTION, 'error', {
-              buttons: { confirm: { className: 'btn-primary' } },
-            }));
+          .catch(() => showErrorAlert());
       }
     });
   }
